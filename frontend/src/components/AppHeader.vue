@@ -11,6 +11,9 @@
         <router-link to="/about" class="nav-link" :class="{ active: $route.name === 'About' }">
           关于
         </router-link>
+        <router-link to="/chat" class="nav-link" :class="{ active: $route.name === 'Chat' }">
+          AI 助手
+        </router-link>
       </nav>
     </div>
   </header>

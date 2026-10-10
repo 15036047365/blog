@@ -127,15 +127,26 @@ watch(() => route.params.id, (newId) => {
   background-color: #f5f5f5;
   padding: 2px 6px;
   border-radius: 3px;
-  font-size: 14px;
+  font-size: 13px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  color: #c7254e;
 }
 
 .post-content :deep(pre) {
-  background-color: #f5f5f5;
+  background-color: #f6f8fa;
+  border: 1px solid #e6e8eb;
   padding: 16px;
   border-radius: 6px;
   overflow-x: auto;
   margin-bottom: 16px;
+  line-height: 1.65;
+}
+
+.post-content :deep(pre code) {
+  background: none;
+  padding: 0;
+  color: #24292f;
+  font-size: 13px;
 }
 
 .post-tags {

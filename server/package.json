@@ -1,14 +1,17 @@
-{
-  "name": "boke-server",
-  "version": "1.0.0",
-  "description": "博客后端服务",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "dev": "node --watch index.js"
-  },
-  "dependencies": {
-    "express": "^4.19.0",
-    "cors": "^2.8.5"
-  }
+﻿{
+    "name":  "boke-server",
+    "version":  "1.0.0",
+    "description":  "博客后端服务",
+    "main":  "index.js",
+    "scripts":  {
+                    "start":  "node index.js",
+                    "dev":  "node --watch index.js"
+                },
+    "dependencies":  {
+                         "express":  "^4.19.0",
+                         "cors":  "^2.8.5",
+                         "dotenv":  "^17.4.2",
+                         "express-rate-limit":  "^6.11.2",
+                         "node-fetch":  "^2.7.0"
+                     }
 }
