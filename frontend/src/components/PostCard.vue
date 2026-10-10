@@ -1,18 +1,15 @@
 <template>
-  <article class="post-card card">
-    <h2 class="post-title">
-      <router-link :to="`/post/${post.id}`">{{ post.title }}</router-link>
-    </h2>
-    <div class="post-meta">
-      <span class="meta-item">{{ post.author }}</span>
-      <span class="meta-item">{{ formatDate(post.createdAt) }}</span>
-      <span class="meta-item">{{ post.category }}</span>
-    </div>
-    <p class="post-excerpt">{{ post.excerpt }}</p>
-    <div class="post-tags">
-      <span v-for="tag in post.tags" :key="tag" class="tag">{{ tag }}</span>
-    </div>
-    <router-link :to="`/post/${post.id}`" class="read-more">阅读全文 →</router-link>
+  <article class="case">
+    <router-link class="case-link" :to="`/post/${post.id}`">
+      <div class="case-main">
+        <h2 class="case-title">{{ post.title }}</h2>
+        <p class="case-excerpt">{{ post.excerpt }}</p>
+      </div>
+      <div class="case-rail">
+        <span class="case-cat">{{ post.category }}</span>
+        <time class="mono case-date" :datetime="post.createdAt">{{ formatDate(post.createdAt) }}</time>
+      </div>
+    </router-link>
   </article>
 </template>
 
@@ -31,60 +28,71 @@ function formatDate(dateStr) {
 </script>
 
 <style scoped>
-.post-card {
-  transition: transform 0.2s;
+.case {
+  border-top: 1px solid var(--rule);
+  transition: border-color 200ms ease;
 }
 
-.post-card:hover {
-  transform: translateY(-2px);
+.case:hover {
+  border-top-color: var(--rule-strong);
 }
 
-.post-title {
-  font-size: 20px;
-  margin-bottom: 10px;
+.case-link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px;
+  gap: 0 36px;
+  padding: 28px 0 26px;
 }
 
-.post-title a {
-  color: #333;
+.case-title {
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  transition: color 160ms ease;
 }
 
-.post-title a:hover {
-  color: #1a73e8;
+.case-link:hover .case-title {
+  color: var(--signal);
 }
 
-.post-meta {
+.case-excerpt {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--ink-mute);
+}
+
+.case-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  text-align: right;
+}
+
+.case-cat {
   font-size: 13px;
-  color: #999;
-  margin-bottom: 12px;
+  color: var(--ink-mute);
 }
 
-.meta-item {
-  margin-right: 15px;
-}
+@media (max-width: 720px) {
+  .case-link {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
 
-.meta-item::before {
-  content: '·';
-  margin-right: 6px;
-}
+  .case-rail {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: flex-start;
+    gap: 16px;
+    margin-top: 14px;
+  }
 
-.meta-item:first-child::before {
-  content: '';
-  margin-right: 0;
-}
-
-.post-excerpt {
-  color: #666;
-  font-size: 14px;
-  line-height: 1.8;
-  margin-bottom: 12px;
-}
-
-.post-tags {
-  margin-bottom: 12px;
-}
-
-.read-more {
-  font-size: 14px;
-  font-weight: 500;
+  .case-title {
+    font-size: 19px;
+  }
 }
 </style>

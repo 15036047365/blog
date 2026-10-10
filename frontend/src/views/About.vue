@@ -1,61 +1,84 @@
 <template>
-  <div class="container about">
-    <div class="card about-card">
+  <div class="shell about">
+    <article class="letter">
       <h1 class="about-title">关于我</h1>
-      <div class="about-content">
+
+      <div class="about-body">
         <p>你好！我是一个热爱技术的开发者，有6年工作经验。</p>
         <p>这个博客是我的个人技术分享平台，在这里我会记录工作中的技术心得、学习笔记和生活感悟。</p>
         <p>我目前主要使用 Vue.js 进行前端开发，同时也在学习 Node.js 后端开发。</p>
         <p>希望通过这个博客能和大家一起交流进步！</p>
       </div>
-      <div class="about-info">
-        <h3>联系方式</h3>
-        <!-- <p>GitHub: <a href="https://github.com" target="_blank">github.com/example</a></p> -->
-        <p>Email: 1076336425@qq.com</p>
-      </div>
-    </div>
+
+      <section class="contact">
+        <h2 class="rule-title">联系</h2>
+        <dl class="contact-list">
+          <div class="contact-row">
+            <dt class="mono">Email</dt>
+            <dd><a href="mailto:1076336425@qq.com">1076336425@qq.com</a></dd>
+          </div>
+        </dl>
+      </section>
+    </article>
   </div>
 </template>
 
 <style scoped>
-.about {
-  max-width: 800px;
+.letter {
+  max-width: var(--measure);
   margin: 0 auto;
 }
 
 .about-title {
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: #333;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #1a73e8;
+  font-family: var(--serif);
+  font-size: clamp(23px, 3.2vw, 30px);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--rule-strong);
 }
 
-.about-content {
-  font-size: 15px;
-  line-height: 2;
-  color: #555;
-}
-
-.about-content p {
-  margin-bottom: 12px;
-}
-
-.about-info {
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #eee;
-}
-
-.about-info h3 {
+.about-body {
+  margin-top: 32px;
   font-size: 16px;
-  margin-bottom: 12px;
-  color: #333;
+  line-height: 2;
+  color: var(--ink);
 }
 
-.about-info p {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 6px;
+.about-body p {
+  margin-bottom: 1.2em;
+}
+
+.contact {
+  margin-top: 64px;
+}
+
+.contact-list {
+  margin-top: 20px;
+}
+
+.contact-row {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.contact-row dt {
+  padding-top: 3px;
+}
+
+.contact-row dd {
+  font-size: 16px;
+}
+
+.contact-row a {
+  color: var(--signal);
+  border-bottom: 1px solid rgba(14, 110, 99, 0.35);
+}
+
+.contact-row a:hover {
+  border-bottom-color: currentColor;
 }
 </style>

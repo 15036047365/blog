@@ -1,19 +1,14 @@
 <template>
   <header class="header">
-    <div class="container header-inner">
-      <router-link to="/" class="logo">
-        <h1>我的博客-Mr. Li</h1>
+    <div class="shell header-inner">
+      <router-link to="/" class="masthead">
+        <span class="site-name">李孟飞</span>
+        <span class="site-beat">前端工程笔记</span>
       </router-link>
       <nav class="nav">
-        <router-link to="/" class="nav-link" :class="{ active: $route.name === 'Home' }">
-          首页
-        </router-link>
-        <router-link to="/about" class="nav-link" :class="{ active: $route.name === 'About' }">
-          关于
-        </router-link>
-        <router-link to="/chat" class="nav-link" :class="{ active: $route.name === 'Chat' }">
-          AI 助手
-        </router-link>
+        <router-link to="/" class="nav-link">首页</router-link>
+        <router-link to="/about" class="nav-link">关于</router-link>
+        <router-link to="/chat" class="nav-link">AI 助手</router-link>
       </nav>
     </div>
   </header>
@@ -21,41 +16,79 @@
 
 <style scoped>
 .header {
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
 }
 
 .header-inner {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  height: 60px;
+  gap: 24px;
+  padding-top: 20px;
+  padding-bottom: 18px;
 }
 
-.logo h1 {
+.masthead {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
+}
+
+.site-name {
+  font-family: var(--serif);
   font-size: 22px;
-  color: #333;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.site-beat {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+  white-space: nowrap;
 }
 
 .nav {
   display: flex;
-  gap: 20px;
+  gap: 22px;
 }
 
 .nav-link {
   font-size: 15px;
-  color: #666;
-  padding: 6px 0;
+  color: var(--ink-mute);
+  padding-bottom: 2px;
   border-bottom: 2px solid transparent;
-  transition: all 0.3s;
+  transition: color 160ms ease, border-color 160ms ease;
 }
 
-.nav-link:hover,
-.nav-link.active {
-  color: #1a73e8;
-  border-bottom-color: #1a73e8;
+.nav-link:hover {
+  color: var(--ink);
+}
+
+.nav-link.router-link-exact-active {
+  color: var(--ink);
+  border-bottom-color: var(--signal);
+}
+
+@media (max-width: 640px) {
+  .header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .site-beat {
+    display: none;
+  }
+
+  .nav {
+    gap: 18px;
+  }
 }
 </style>

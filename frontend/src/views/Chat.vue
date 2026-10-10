@@ -1,21 +1,19 @@
 <template>
-  <div class="container chat-page">
-    <div class="chat-card">
-      <!-- 头部 -->
-      <div class="chat-header">
-        <div class="chat-header-info">
-          <h2 class="chat-title">🤖 AI 助手</h2>
-          <span class="chat-subtitle">由 DeepSeek 驱动 · 随时提问</span>
+  <div class="shell chat-page">
+    <div class="chat-panel">
+      <header class="chat-head">
+        <div class="chat-head-info">
+          <h1 class="chat-title">AI 助手</h1>
+          <span class="mono chat-subtitle">由 DeepSeek 驱动</span>
         </div>
         <button v-if="messages.length" class="btn btn-clear" @click="clearChat">清空对话</button>
-      </div>
+      </header>
 
       <!-- 消息列表 -->
       <div ref="msgBox" class="msg-list">
         <div v-if="messages.length === 0" class="empty-state">
-          <div class="empty-icon">💬</div>
-          <p class="empty-title">你好，我是你的 AI 助手</p>
-          <p class="empty-desc">有什么问题尽管问我，比如「帮我总结一下 Vue3 的响应式原理」</p>
+          <p class="empty-title">问我任何前端问题</p>
+          <p class="empty-desc">比如「帮我总结一下 Vue3 的响应式原理」</p>
         </div>
 
         <div v-for="(msg, i) in messages" :key="i" class="msg" :class="msg.role">
@@ -153,151 +151,159 @@ async function sendMessage() {
 
 <style scoped>
 .chat-page {
-  max-width: 900px;
-}
-
-.chat-card {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  max-width: 860px;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 160px);
-  min-height: 420px;
+}
+
+.chat-panel {
+  flex: 1;
+  min-height: 440px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule-strong);
+  border-radius: 2px;
   overflow: hidden;
 }
 
-.chat-header {
+.chat-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
-  border-bottom: 1px solid #eee;
+  gap: 20px;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.chat-head-info {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
 }
 
 .chat-title {
-  font-size: 18px;
-  color: #333;
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
 }
 
 .chat-subtitle {
-  font-size: 13px;
-  color: #999;
-  margin-left: 10px;
+  white-space: nowrap;
 }
 
 .btn-clear {
-  background: #f5f5f5;
-  color: #666;
-  padding: 6px 14px;
+  padding: 5px 12px;
   font-size: 13px;
-  border-radius: 6px;
+  border-color: var(--rule);
+  color: var(--ink-mute);
 }
 
 .btn-clear:hover {
-  background: #e8e8e8;
-  color: #333;
+  border-color: var(--ink);
+  color: var(--ink);
 }
 
-/* 消息列表 */
+/* ---------- 消息列表 ---------- */
+
 .msg-list {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 24px;
-  background: #fafafa;
+  padding: 24px 22px;
 }
 
 .empty-state {
+  margin-top: 16vh;
   text-align: center;
-  margin-top: 18vh;
-  color: #999;
-}
-
-.empty-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
 }
 
 .empty-title {
-  font-size: 16px;
-  color: #666;
-  margin-bottom: 6px;
+  font-family: var(--serif);
+  font-size: 18px;
+  letter-spacing: 0.03em;
+  margin-bottom: 8px;
 }
 
 .empty-desc {
-  font-size: 13px;
+  font-size: 14px;
+  color: var(--ink-mute);
 }
 
 .msg {
   display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
 .msg.user {
   flex-direction: row-reverse;
 }
 
+/* 方形角色签，和全站的「档案」语言一致，不用圆形头像 */
 .msg-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+  flex-shrink: 0;
+  width: 30px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
-  color: #fff;
-  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  border-radius: 2px;
 }
 
 .msg.user .msg-avatar {
-  background: #1a73e8;
+  background: var(--ink);
+  color: var(--paper);
 }
 
 .msg.assistant .msg-avatar {
-  background: #34a853;
+  background: var(--paper-sunk);
+  border: 1px solid var(--rule);
+  color: var(--ink-mute);
 }
 
 .msg-bubble {
   max-width: 78%;
-  padding: 10px 14px;
-  border-radius: 10px;
-  font-size: 14px;
-  line-height: 1.7;
+  padding: 11px 15px;
+  border-radius: 2px;
+  font-size: 15px;
+  line-height: 1.85;
   word-break: break-word;
   white-space: pre-wrap;
 }
 
 .msg.user .msg-bubble {
-  background: #1a73e8;
-  color: #fff;
-  border-top-right-radius: 2px;
+  background: var(--ink);
+  color: var(--paper);
 }
 
 .msg.assistant .msg-bubble {
-  background: #fff;
-  color: #333;
-  border: 1px solid #eee;
-  border-top-left-radius: 2px;
+  background: var(--paper-sunk);
+  border: 1px solid var(--rule);
+  color: var(--ink);
 }
 
 .msg-text {
   margin: 0;
 }
 
-/* 打字动画 */
+/* 打字指示 */
 .typing {
   display: inline-flex;
   gap: 4px;
   align-items: center;
-  padding: 4px 0;
+  padding: 5px 0;
 }
 
 .dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: #aaa;
+  background: var(--ink-faint);
   animation: blink 1.2s infinite;
 }
 
@@ -309,50 +315,55 @@ async function sendMessage() {
   40% { opacity: 1; }
 }
 
-/* 输入区 */
+/* ---------- 输入区 ---------- */
+
 .chat-input-area {
   display: flex;
   gap: 10px;
-  padding: 14px 24px;
-  border-top: 1px solid #eee;
-  background: #fff;
+  padding: 14px 22px;
+  border-top: 1px solid var(--rule);
 }
 
 .chat-input {
   flex: 1;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 14px;
-  font-family: inherit;
+  padding: 10px 12px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  border-radius: 2px;
   resize: none;
-  outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 160ms ease;
+}
+
+.chat-input::placeholder {
+  color: var(--ink-faint);
 }
 
 .chat-input:focus {
-  border-color: #1a73e8;
+  outline: none;
+  border-color: var(--signal);
+  box-shadow: 0 0 0 3px var(--signal-wash);
 }
 
 .send-btn {
-  padding: 0 24px;
-  border-radius: 8px;
   white-space: nowrap;
 }
 
-.send-btn:disabled {
-  background: #b3cdf5;
-  cursor: not-allowed;
-}
-
 .chat-error {
-  padding: 0 24px 10px;
-  font-size: 12px;
-  color: #d93025;
+  padding: 0 22px 12px;
+  font-size: 13px;
+  color: var(--danger);
 }
 
 @media (max-width: 640px) {
-  .msg-bubble { max-width: 90%; }
-  .chat-subtitle { display: none; }
+  .msg-bubble {
+    max-width: 90%;
+  }
+
+  .chat-subtitle {
+    display: none;
+  }
 }
 </style>

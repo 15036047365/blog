@@ -1,87 +1,394 @@
-* {
+/* ============================================================
+   设计 token —— 「技术档案」
+   冷调纸面 + 蓝黑墨 + 深青信号色。
+   层级只用 --rule 规则线表达：不用卡片、阴影、大圆角。
+   ============================================================ */
+:root {
+  --paper:       #FCFCFB;
+  --paper-sunk:  #F4F6F6;
+  --ink:         #10151C;
+  --ink-mute:    #5B6472;
+  --ink-faint:   #8B93A1;
+  --rule:        #E1E4E8;
+  --rule-strong: #C6CCD4;
+  --signal:      #0E6E63;
+  --signal-deep: #0B5A51;
+  --signal-wash: rgba(14, 110, 99, 0.08);
+  --danger:      #A8322A;
+
+  /* 中文长文：宋体标题 + 黑体正文。不引 Google Fonts（大陆访问不稳）。 */
+  --serif: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  --sans: "PingFang SC", "HarmonyOS Sans SC", "Source Han Sans SC", "Microsoft YaHei",
+          "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+          "Liberation Mono", monospace;
+
+  --shell: 940px;    /* 页面外壳 */
+  --measure: 660px;  /* 正文栏 ≈ 38 个汉字，全站唯一的阅读宽度 */
+  --rail: 80px;      /* 悬挂栏：章节序号和代码块向左借用的宽度 */
+}
+
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  color: #333;
-  background-color: #f5f5f5;
-  line-height: 1.6;
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.9;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  background-color: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-wrap: break-word;
+}
+
+/* 中西文自动间距 / 标点挤压：支持则生效，不支持无副作用 */
+@supports (text-autospace: normal) {
+  body { text-autospace: normal; }
+}
+@supports (text-spacing-trim: trim-start) {
+  body { text-spacing-trim: trim-start; }
+}
+
+::selection {
+  background: var(--signal-wash);
+}
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 a {
-  color: #1a73e8;
+  color: inherit;
   text-decoration: none;
 }
 
-a:hover {
-  color: #1557b0;
+img {
+  max-width: 100%;
+  display: block;
 }
 
-.container {
-  max-width: 1200px;
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------- 布局 ---------- */
+
+/* width:100% 是必须的：.shell 同时要能在 .page 这种纵向 flex 容器里当 item 用，
+   而带交叉轴 auto margin 的 flex item 会被忽略 align-self:stretch、宽度退化成
+   fit-content（聊天页因此缩到 322px）。给了确定宽度，auto margin 才只负责居中。 */
+.shell {
+  width: 100%;
+  max-width: var(--shell);
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
 }
 
-/* 按钮样式 */
-.btn {
-  display: inline-block;
-  padding: 8px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.3s;
+/* 纵向 flex：让需要撑满一屏的页面（聊天）自己 flex:1，
+   不用写 calc(100vh - Npx) 这种会随页头页脚高度失效的硬编码 */
+.page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 64px 0 112px;
 }
+
+/* 区块标题：宋体 + 上方规则线。全站统一的层级语言。 */
+.rule-title {
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule-strong);
+}
+
+/* 等宽小字：日期、计数、分类。 */
+.mono {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-faint);
+}
+
+/* ---------- 控件 ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  font-size: 14px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 2px;
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+
+.btn:hover { border-color: var(--ink); }
 
 .btn-primary {
-  background-color: #1a73e8;
+  background: var(--signal);
+  border-color: var(--signal);
   color: #fff;
 }
 
 .btn-primary:hover {
-  background-color: #1557b0;
+  background: var(--signal-deep);
+  border-color: var(--signal-deep);
 }
 
-/* 卡片样式 */
-.card {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin-bottom: 20px;
+.btn:disabled {
+  cursor: not-allowed;
 }
 
-/* 标签样式 */
+/* 禁用态不做半透明：半透明的青色会发浑，退成线框更清楚 */
+.btn-primary:disabled {
+  background: transparent;
+  border-color: var(--rule);
+  color: var(--ink-faint);
+}
+
+/* 文件标签：等宽 + 细线方框，像档案上的分类签 */
 .tag {
   display: inline-block;
-  padding: 2px 10px;
-  background-color: #e8f0fe;
-  color: #1a73e8;
-  border-radius: 12px;
+  font-family: var(--mono);
   font-size: 12px;
-  margin-right: 6px;
-  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+  color: var(--ink-mute);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 1px 8px;
+  margin: 0 6px 6px 0;
 }
 
-/* 加载动画 */
+/* ---------- 状态 ---------- */
+
 .loading {
-  text-align: center;
-  padding: 40px;
-  color: #999;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: var(--ink-faint);
+  padding: 40px 0;
+  animation: fade-pulse 1.8s ease-in-out infinite;
 }
 
-.loading::after {
-  content: '...';
-  animation: dots 1.5s steps(4, end) infinite;
+@keyframes fade-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
 }
 
-@keyframes dots {
-  0%, 20% { content: ''; }
-  40% { content: '.'; }
-  60% { content: '..'; }
-  80%, 100% { content: '...'; }
+.empty {
+  padding: 56px 0;
+  color: var(--ink-mute);
+  line-height: 1.9;
+}
+
+.empty a {
+  color: var(--signal);
+  border-bottom: 1px solid currentColor;
+}
+
+/* ============================================================
+   .prose —— 文章正文
+   文章页只在两层上做文章：左悬挂栏放章节序号，代码块向左越栏。
+   ============================================================ */
+
+.prose {
+  font-size: 17px;
+  line-height: 1.95;
+  color: var(--ink);
+}
+
+.prose p {
+  margin: 0 0 1.35em;
+}
+
+.prose h2 {
+  position: relative;
+  font-family: var(--serif);
+  font-size: 1.32em;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  margin: 2.9em 0 1.1em;
+  padding-top: 1.1em;
+  border-top: 1px solid var(--rule);
+}
+
+/* 章节序号悬挂到左栏。序号来自作者原文的「一、二、三」，是真实序列。
+   字号不另设，继承 h2 —— 这样伪元素的 em 和标题是同一套度量：
+   top 正好等于 h2 的 padding-top，line-height 等于 h2 的行高，首行行框自然对齐。
+   放大交给 transform，不参与排版盒计算，垂直位置不会被字号反过来带偏。 */
+.prose h2[data-num]::before {
+  content: attr(data-num);
+  position: absolute;
+  top: 1.1em;
+  left: calc(-1 * var(--rail));
+  width: var(--rail);
+  padding-right: 18px;
+  text-align: right;
+  font-family: var(--serif);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--signal);
+  transform: scale(1.25);
+  transform-origin: right center;
+}
+
+.prose h3 {
+  font-size: 1.06em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin: 2.2em 0 0.7em;
+}
+
+.prose ul,
+.prose ol {
+  margin: 0 0 1.35em;
+  padding-left: 1.5em;
+}
+
+.prose li {
+  margin-bottom: 0.5em;
+}
+
+.prose li::marker {
+  color: var(--ink-faint);
+}
+
+.prose strong {
+  font-weight: 600;
+}
+
+.prose a {
+  color: var(--signal);
+  border-bottom: 1px solid rgba(14, 110, 99, 0.35);
+}
+
+.prose a:hover {
+  border-bottom-color: currentColor;
+}
+
+.prose code {
+  font-family: var(--mono);
+  font-size: 0.87em;
+  background: var(--paper-sunk);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 0.1em 0.35em;
+}
+
+.prose pre {
+  margin: 1.7em 0;
+  padding: 18px 20px;
+  background: var(--paper-sunk);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 13.5px;
+  line-height: 1.75;
+  letter-spacing: 0;
+  color: #1C2830;
+}
+
+.prose pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* 全页唯一的「响」点：代码块向左越出正文栏，占住悬挂栏。
+   由内容驱动（这个博客代码密集），不是装饰。
+   窄屏 --rail 归零，本规则退化为 no-op。 */
+.prose pre {
+  margin-left: calc(-1 * var(--rail));
+  width: calc(100% + var(--rail));
+}
+
+.prose blockquote {
+  margin: 1.7em 0;
+  padding-left: 18px;
+  border-left: 2px solid var(--rule-strong);
+  color: var(--ink-mute);
+}
+
+.prose hr {
+  margin: 2.6em 0;
+  border: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.prose table {
+  width: 100%;
+  margin: 1.7em 0;
+  border-collapse: collapse;
+  font-size: 0.94em;
+}
+
+.prose th,
+.prose td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+}
+
+.prose th {
+  border-bottom-color: var(--rule-strong);
+  font-weight: 600;
+}
+
+/* 窄屏没有悬挂栏：章节序号回到标题上方，独自成行 */
+@media (max-width: 899px) {
+  :root {
+    --rail: 0px;
+  }
+
+  .prose h2[data-num]::before {
+    position: static;
+    display: block;
+    width: auto;
+    padding-right: 0;
+    text-align: left;
+    font-size: 0.8em;
+    line-height: 1;
+    margin-bottom: 0.5em;
+    transform: none;
+  }
+}
+
+/* ---------- 无障碍底线 ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

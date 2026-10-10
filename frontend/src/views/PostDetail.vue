@@ -1,53 +1,71 @@
 <template>
-  <div class="container post-detail">
+  <div class="shell detail">
     <div v-if="loading" class="loading">加载中</div>
+
     <template v-else-if="blogStore.currentPost">
-      <article class="post-article card">
-        <h1 class="post-title">{{ blogStore.currentPost.title }}</h1>
-        <div class="post-meta">
-          <span>{{ blogStore.currentPost.author }}</span>
-          <span>{{ formatDate(blogStore.currentPost.createdAt) }}</span>
-          <span>{{ blogStore.currentPost.category }}</span>
-        </div>
-        <div class="post-content" v-html="blogStore.currentPost.content"></div>
-        <div class="post-tags">
+      <article class="doc">
+        <header class="doc-head">
+          <h1 class="doc-title">{{ blogStore.currentPost.title }}</h1>
+          <div class="doc-meta">
+            <span>{{ blogStore.currentPost.category }}</span>
+            <time class="mono" :datetime="blogStore.currentPost.createdAt">
+              {{ formatDate(blogStore.currentPost.createdAt) }}
+            </time>
+          </div>
+        </header>
+
+        <div class="prose" v-html="bodyHtml"></div>
+
+        <footer class="doc-foot">
           <span v-for="tag in blogStore.currentPost.tags" :key="tag" class="tag">{{ tag }}</span>
-        </div>
+        </footer>
       </article>
 
-      <!-- 评论区 -->
-      <div class="comments-section card">
-        <h3 class="section-title">评论 ({{ blogStore.comments.length }})</h3>
-        <div class="comment-form">
-          <textarea v-model="commentForm.content" placeholder="写下你的评论..." rows="3"></textarea>
-          <div class="comment-form-footer">
-            <input v-model="commentForm.author" placeholder="昵称" class="comment-input" />
-            <button @click="submitComment" class="btn btn-primary">发表评论</button>
-          </div>
-        </div>
-        <div class="comments-list">
-          <div v-for="comment in blogStore.comments" :key="comment.id" class="comment-item">
-            <div class="comment-header">
-              <strong>{{ comment.author }}</strong>
-              <span class="comment-time">{{ formatDate(comment.createdAt) }}</span>
+      <section id="comments" class="comments">
+        <h2 class="rule-title">
+          评论<span class="comments-n">{{ blogStore.comments.length }}</span>
+        </h2>
+
+        <div class="comment-list">
+          <div v-for="comment in blogStore.comments" :key="comment.id" class="comment">
+            <div class="comment-head">
+              <strong class="comment-author">{{ comment.author }}</strong>
+              <time class="mono">{{ formatDate(comment.createdAt) }}</time>
             </div>
-            <p class="comment-content">{{ comment.content }}</p>
+            <p class="comment-body">{{ comment.content }}</p>
           </div>
-          <div v-if="blogStore.comments.length === 0" class="no-comments">
-            暂无评论，快来抢沙发吧~
-          </div>
+          <p v-if="blogStore.comments.length === 0" class="comment-empty">还没有评论。</p>
         </div>
-      </div>
+
+        <form class="comment-form" @submit.prevent="submitComment">
+          <textarea
+            v-model="commentForm.content"
+            class="field"
+            rows="4"
+            placeholder="写下你的看法"
+            aria-label="评论内容"
+          ></textarea>
+          <div class="form-foot">
+            <input
+              v-model="commentForm.author"
+              class="field field-name"
+              placeholder="昵称"
+              aria-label="昵称"
+            />
+            <button type="submit" class="btn btn-primary" :disabled="!canSubmit">发表评论</button>
+          </div>
+        </form>
+      </section>
     </template>
-    <div v-else class="not-found card">
-      <h2>文章不存在</h2>
-      <router-link to="/">返回首页</router-link>
-    </div>
+
+    <p v-else class="empty">
+      这篇不存在，可能是链接过期了。<router-link to="/">回到文章列表</router-link>
+    </p>
   </div>
 </template>
 
 <script setup>
-import { onMounted, reactive, watch } from 'vue'
+import { computed, onMounted, reactive, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useBlogStore } from '@/stores/blog'
@@ -62,13 +80,36 @@ const commentForm = reactive({
   author: ''
 })
 
+const canSubmit = computed(
+  () => commentForm.content.trim() !== '' && commentForm.author.trim() !== ''
+)
+
+/* 作者原文的章节标题就是「一、问题：…」，本身就是序列。
+   把序号摘出来放进 data-num，由 CSS 悬挂到左侧栏位，正文文字保持原样长短。 */
+function withSectionNumbers(html) {
+  if (!html) return ''
+
+  const doc = new DOMParser().parseFromString(html, 'text/html')
+
+  doc.querySelectorAll('h2').forEach((heading) => {
+    const match = heading.textContent.match(/^\s*([一二三四五六七八九十]+)\s*[、.．]\s*/)
+    if (!match) return
+    heading.dataset.num = match[1]
+    heading.textContent = heading.textContent.slice(match[0].length)
+  })
+
+  return doc.body.innerHTML
+}
+
+const bodyHtml = computed(() => withSectionNumbers(blogStore.currentPost?.content))
+
 function formatDate(dateStr) {
   const date = new Date(dateStr)
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 }
 
 async function submitComment() {
-  if (!commentForm.content.trim() || !commentForm.author.trim()) return
+  if (!canSubmit.value) return
   await blogStore.submitComment({
     postId: route.params.id,
     content: commentForm.content,
@@ -90,137 +131,131 @@ watch(() => route.params.id, (newId) => {
 </script>
 
 <style scoped>
-.post-title {
-  font-size: 26px;
-  margin-bottom: 15px;
-  color: #333;
+/* 正文栏本身居中，章节序号和代码块向左悬进空白里 ——
+   阅读栏不被左栏推偏，越栏的代码块才是这一页的「响」点。 */
+.doc {
+  max-width: var(--measure);
+  margin: 0 auto;
 }
 
-.post-meta {
-  font-size: 13px;
-  color: #999;
-  margin-bottom: 20px;
+.doc-title {
+  font-family: var(--serif);
+  font-size: clamp(24px, 3.6vw, 34px);
+  font-weight: 600;
+  line-height: 1.42;
+  letter-spacing: 0.02em;
 }
 
-.post-meta span {
-  margin-right: 15px;
-}
-
-.post-content {
-  font-size: 15px;
-  line-height: 2;
-  color: #444;
-  padding: 20px 0;
-}
-
-.post-content :deep(h2),
-.post-content :deep(h3) {
-  margin-top: 24px;
-  margin-bottom: 12px;
-}
-
-.post-content :deep(p) {
-  margin-bottom: 16px;
-}
-
-.post-content :deep(code) {
-  background-color: #f5f5f5;
-  padding: 2px 6px;
-  border-radius: 3px;
-  font-size: 13px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
-  color: #c7254e;
-}
-
-.post-content :deep(pre) {
-  background-color: #f6f8fa;
-  border: 1px solid #e6e8eb;
-  padding: 16px;
-  border-radius: 6px;
-  overflow-x: auto;
-  margin-bottom: 16px;
-  line-height: 1.65;
-}
-
-.post-content :deep(pre code) {
-  background: none;
-  padding: 0;
-  color: #24292f;
-  font-size: 13px;
-}
-
-.post-tags {
-  padding-top: 16px;
-  border-top: 1px solid #eee;
-}
-
-.section-title {
-  font-size: 18px;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #1a73e8;
-}
-
-.comment-form textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  resize: vertical;
-  font-size: 14px;
-  font-family: inherit;
-}
-
-.comment-form-footer {
+/* 下面不加横线：紧跟着的第一个 h2 自带一条，两条离太近会读成一组 */
+.doc-meta {
   display: flex;
-  gap: 10px;
-  margin-top: 10px;
-  align-items: center;
+  align-items: baseline;
+  gap: 16px;
+  margin-top: 18px;
+  font-size: 13px;
+  color: var(--ink-mute);
 }
 
-.comment-input {
-  flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
+.doc-foot {
+  margin-top: 44px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
 }
 
-.comments-list {
-  margin-top: 24px;
+/* ---------- 评论 ---------- */
+
+.comments {
+  max-width: var(--measure);
+  margin: 96px auto 0;
 }
 
-.comment-item {
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.comment-header {
-  margin-bottom: 6px;
-  font-size: 14px;
-}
-
-.comment-time {
-  color: #999;
-  margin-left: 10px;
+.comments-n {
+  font-family: var(--mono);
   font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-faint);
+  margin-left: 8px;
 }
 
-.comment-content {
-  font-size: 14px;
-  color: #666;
-  line-height: 1.6;
+.comment-list {
+  margin-top: 8px;
 }
 
-.no-comments {
-  text-align: center;
-  padding: 30px;
-  color: #999;
-  font-size: 14px;
+.comment {
+  padding: 22px 0;
+  border-bottom: 1px solid var(--rule);
 }
 
-.not-found {
-  text-align: center;
-  padding: 60px 20px;
+.comment-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+
+.comment-author {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.comment-body {
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--ink-mute);
+  white-space: pre-wrap;
+}
+
+.comment-empty {
+  padding: 26px 0;
+  font-size: 15px;
+  color: var(--ink-mute);
+}
+
+.comment-form {
+  margin-top: 28px;
+}
+
+.field {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  border-radius: 2px;
+  transition: border-color 160ms ease;
+}
+
+.field::placeholder {
+  color: var(--ink-faint);
+}
+
+/* 去掉默认 outline，但换成自己的焦点指示：边框整体由灰转青 + 一圈淡 wash。
+   键盘和鼠标都有明确反馈，也不会和全局焦点环叠成两层。 */
+.field:focus {
+  outline: none;
+  border-color: var(--signal);
+  box-shadow: 0 0 0 3px var(--signal-wash);
+}
+
+textarea.field {
+  resize: vertical;
+}
+
+.form-foot {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.field-name {
+  flex: 1;
+}
+
+@media (max-width: 720px) {
+  .form-foot {
+    flex-direction: column;
+  }
 }
 </style>

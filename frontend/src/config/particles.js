@@ -32,13 +32,15 @@ export const particlesOptions = {
   },
   particles: {
     color: {
-      value: '#1a73e8',
+      value: '#0E6E63',
     },
     links: {
-      color: '#1a73e8',
+      color: '#0E6E63',
       distance: 150,
       enable: true,
-      opacity: 0.3,
+      // 正文不再有白卡片垫底，粒子直接压在 17px 汉字下面，
+      // 所以连线和不透明度都比原来压低，让它退成纸纹而不是一张网
+      opacity: 0.16,
       width: 1,
     },
     move: {
@@ -48,7 +50,7 @@ export const particlesOptions = {
         default: 'bounce',
       },
       random: false,
-      speed: 2,
+      speed: 0.8,
       straight: false,
     },
     number: {
@@ -56,10 +58,10 @@ export const particlesOptions = {
         enable: true,
         area: 800,
       },
-      value: 60,
+      value: 45,
     },
     opacity: {
-      value: 0.4,
+      value: 0.26,
     },
     shape: {
       type: 'circle',

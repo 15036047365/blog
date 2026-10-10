@@ -1,8 +1,8 @@
 <template>
-  <div id="app">
+  <div class="app">
     <ParticlesBackground />
     <AppHeader />
-    <main class="main-content">
+    <main class="page">
       <router-view />
     </main>
     <AppFooter />
@@ -16,8 +16,9 @@ import AppFooter from '@/components/AppFooter.vue'
 </script>
 
 <style scoped>
-.main-content {
-  min-height: calc(100vh - 140px);
-  padding: 20px 0;
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 </style>

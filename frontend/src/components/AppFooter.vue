@@ -1,30 +1,38 @@
 <template>
   <footer class="footer">
-    <div class="container">
-      <p>&copy; 2026 我的博客 - 用 Vue 3 + Node.js 构建</p>
-      <p class="site-stats">
-        <span>
-          <i class="icon">👁️</i>
-          总访问量：<span class="stat-value">{{ stats.pv }}</span>
-        </span>
-        <span class="divider">|</span>
-        <span>
-          <i class="icon">👤</i>
-          今日访客：<span class="stat-value">{{ stats.uv }}</span>
-        </span>
+    <div class="shell footer-inner">
+      <p class="footer-build">
+        用 Vue 3 + Node.js 构建<span class="footer-year">© {{ year }}</span>
       </p>
+
+      <dl class="stats">
+        <div class="stat">
+          <dt>总访问量</dt>
+          <dd class="stat-value">{{ formatNumber(stats.pv) }}</dd>
+        </div>
+        <div class="stat">
+          <dt>今日访客</dt>
+          <dd class="stat-value">{{ formatNumber(stats.uv) }}</dd>
+        </div>
+      </dl>
     </div>
   </footer>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { statsApi } from '@/api'
 
 const stats = ref({
   pv: 0,
   uv: 0
 })
+
+const year = computed(() => new Date().getFullYear())
+
+function formatNumber(value) {
+  return Number(value || 0).toLocaleString('zh-CN')
+}
 
 onMounted(async () => {
   try {
@@ -38,34 +46,50 @@ onMounted(async () => {
 
 <style scoped>
 .footer {
-  background: #fff;
-  border-top: 1px solid #eee;
-  padding: 20px 0;
-  text-align: center;
-  color: #999;
-  font-size: 14px;
+  border-top: 1px solid var(--rule);
+  padding: 26px 0 30px;
 }
 
-.site-stats {
-  margin-top: 8px;
-  font-size: 13px;
+.footer-inner {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+.footer-year {
+  margin-left: 14px;
+}
+
+.stats {
+  display: flex;
+  gap: 28px;
+}
+
+.stat {
+  display: flex;
+  align-items: baseline;
   gap: 8px;
 }
 
-.site-stats .icon {
-  font-style: normal;
-  margin-right: 2px;
-}
-
-.site-stats .divider {
-  color: #ddd;
+.stat dt {
+  font-size: 13px;
+  color: var(--ink-faint);
 }
 
 .stat-value {
-  font-weight: 600;
-  color: #666;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+@media (max-width: 640px) {
+  .footer-inner {
+    flex-direction: column;
+    gap: 12px;
+  }
 }
 </style>
