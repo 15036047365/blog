@@ -5,6 +5,8 @@
       <p class="mono home-count">{{ visible.length }} 篇</p>
     </header>
 
+    <HomeCarousel />
+
     <!-- 分类是互斥的一维，所以做成单选筛选条；标签是多值的，放在页尾当标签用，不混进筛选 -->
     <nav class="filters" aria-label="按分类筛选">
       <button class="filter" :class="{ on: active === null }" @click="active = null">
@@ -49,6 +51,7 @@ import { computed, onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useBlogStore } from '@/stores/blog'
 import PostCard from '@/components/PostCard.vue'
+import HomeCarousel from '@/components/HomeCarousel.vue'
 
 const blogStore = useBlogStore()
 const { loading } = storeToRefs(blogStore)
@@ -127,7 +130,7 @@ onMounted(() => {
 
 .case-list {
   list-style: none;
-  margin-top: 44px;
+  margin-top: 22px;
 }
 
 /* 最后一行补上底线，把台账收口 */

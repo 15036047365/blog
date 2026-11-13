@@ -106,7 +106,7 @@ textarea {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 64px 0 112px;
+  padding: 20px 0 112px;
 }
 
 /* 区块标题：宋体 + 上方规则线。全站统一的层级语言。 */
