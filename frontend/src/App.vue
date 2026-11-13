@@ -1,6 +1,7 @@
 <template>
   <div class="app">
     <ParticlesBackground />
+    <CursorWords />
     <AppHeader />
     <main class="page">
       <router-view />
@@ -11,6 +12,7 @@
 
 <script setup>
 import ParticlesBackground from '@/components/ParticlesBackground.vue'
+import CursorWords from '@/components/CursorWords.vue'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
 </script>
